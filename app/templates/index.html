@@ -1,1 +1,73 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Profile</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 350px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .info {
+            margin: 15px 0;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>My Profile</h1>
+
+    {% if user %}
+
+        <div class="info">
+            <span class="label">Name:</span>
+            {{ user[0] }}
+        </div>
+
+        <div class="info">
+            <span class="label">Age:</span>
+            {{ user[1] }}
+        </div>
+
+        <div class="info">
+            <span class="label">Email:</span>
+            {{ user[2] }}
+        </div>
+
+    {% else %}
+
+        <p>No user data found.</p>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
