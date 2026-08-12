@@ -1,6 +1,17 @@
 venv/
 __pycache__/
 *.pyc
+.git/
+.github/
 .env
 .vscode/
 .idea/
+tests/
+README.md
+docs/
+terraform/
+cloudformation/
+k8s/
+ai/
+scripts/
+.dockerignore
