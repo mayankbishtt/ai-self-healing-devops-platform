@@ -4,3 +4,6 @@ __pycache__/
 .env
 .vscode/
 .idea/
+
+k8s/postgres-secret.yaml
+k8s/app-secret.yaml

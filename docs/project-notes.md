@@ -97,3 +97,83 @@ Flask
 host.docker.internal
     ↓
 PostgreSQL on Windows
+# Phase 4 - Kubernetes
+
+## Namespace
+
+A Namespace logically isolates resources inside a Kubernetes cluster.
+
+Project namespace:
+
+devops-app
+
+## Deployment
+
+Deployment manages the desired number of application Pods.
+
+Flask Deployment:
+2 replicas
+
+## Pod
+
+Pod is the smallest deployable unit in Kubernetes.
+
+The Flask application runs inside a Pod.
+
+## Service
+
+A Service provides a stable network endpoint for Pods.
+
+Flask:
+NodePort
+
+PostgreSQL:
+ClusterIP
+
+## ConfigMap
+
+ConfigMap stores non-sensitive configuration.
+
+Example:
+
+DB_HOST=postgres-service
+
+## Secret
+
+Secret stores sensitive configuration such as database credentials.
+
+## PersistentVolumeClaim
+
+PVC requests persistent storage for PostgreSQL.
+
+This prevents database data from depending only on the Pod filesystem.
+
+## Kubernetes DNS
+
+Flask connects to PostgreSQL through:
+
+postgres-service
+
+rather than a Pod IP.
+
+## Probes
+
+Readiness probe:
+
+Determines whether a Pod should receive traffic.
+
+Liveness probe:
+
+Determines whether Kubernetes should restart a failed container.
+
+## Desired State
+
+Deployment declares:
+
+replicas: 2
+
+Kubernetes continuously attempts to maintain the desired state.
+
+## Self-Healing
+
+If a Flask Pod is deleted or crashes, the Deployment creates a replacement Pod.

@@ -27,7 +27,28 @@ def home():
 
 @app.route("/health")
 def health():
-    return {"status": "healthy"}
+    connection = None
+
+    try:
+        connection = get_db_connection()
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT 1;")
+        cursor.fetchone()
+        cursor.close()
+
+        return {"status": "healthy", "database": "connected"}
+
+    except Exception as error:
+        return {
+            "status": "unhealthy",
+            "database": "disconnected",
+            "error": str(error)
+        }, 503
+
+    finally:
+        if connection:
+            connection.close()
 
 
 if __name__ == "__main__":
