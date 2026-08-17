@@ -1,0 +1,146 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+  Network infrastructure for the AI Self-Healing DevOps Platform.
+
+Parameters:
+
+  VpcCidr:
+    Type: String
+    Default: 10.0.0.0/16
+    Description: CIDR block for the VPC.
+
+  PublicSubnetCidr:
+    Type: String
+    Default: 10.0.1.0/24
+    Description: CIDR block for the public subnet.
+  
+  SSHLocation:
+    Type: String
+    Description: CIDR range allowed to access EC2 using SSH.
+    Default: 0.0.0.0/0
+
+Resources:
+
+  DevOpsVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+
+      Tags:
+        - Key: Name
+          Value: ai-devops-vpc
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+    Properties:
+      Tags:
+        - Key: Name
+          Value: ai-devops-igw
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref DevOpsVPC
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+
+    Properties:
+      VpcId: !Ref DevOpsVPC
+      CidrBlock: !Ref PublicSubnetCidr
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs ''
+
+      MapPublicIpOnLaunch: true
+
+      Tags:
+        - Key: Name
+          Value: ai-devops-public-subnet
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+
+    Properties:
+      VpcId: !Ref DevOpsVPC
+
+      Tags:
+        - Key: Name
+          Value: ai-devops-public-rt
+
+  DefaultInternetRoute:
+    Type: AWS::EC2::Route
+
+    DependsOn: InternetGatewayAttachment
+
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet
+
+  EC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+
+    Properties:
+      GroupDescription: Security group for DevOps EC2 instance
+      VpcId: !Ref DevOpsVPC
+
+      SecurityGroupIngress:
+
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref SSHLocation
+          Description: SSH
+
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: HTTP
+
+      SecurityGroupEgress:
+
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+
+      Tags:
+        - Key: Name
+          Value: ai-devops-ec2-sg
+
+Outputs:
+
+  VpcId:
+    Description: ID of the DevOps VPC
+    Value: !Ref DevOpsVPC
+    Export:
+      Name: AI-DevOps-VpcId
+
+  PublicSubnetId:
+    Description: ID of the public subnet
+    Value: !Ref PublicSubnet
+    Export:
+      Name: AI-DevOps-PublicSubnetId
+
+  SecurityGroupId:
+    Description: ID of the EC2 security group
+    Value: !Ref EC2SecurityGroup
+    Export:
+      Name: AI-DevOps-SecurityGroupId
+
+  InternetGatewayId:
+    Description: ID of the Internet Gateway
+    Value: !Ref InternetGateway

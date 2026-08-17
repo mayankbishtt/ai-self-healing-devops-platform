@@ -1,9 +1,28 @@
+# Python
 venv/
 __pycache__/
 *.pyc
+
+# Environment
 .env
+
+# IDE
 .vscode/
 .idea/
 
+# Kubernetes secrets
 k8s/postgres-secret.yaml
 k8s/app-secret.yaml
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+
+# SSH keys
+*.pem
+*.ppk

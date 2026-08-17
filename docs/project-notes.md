@@ -177,3 +177,113 @@ Kubernetes continuously attempts to maintain the desired state.
 ## Self-Healing
 
 If a Flask Pod is deleted or crashes, the Deployment creates a replacement Pod.
+# Phase 5 - Argo CD and GitOps
+
+## Argo CD
+
+Argo CD is a declarative GitOps continuous delivery tool for Kubernetes.
+
+## GitOps
+
+Git is used as the source of truth for the desired Kubernetes state.
+
+Architecture:
+
+Developer
+    ↓
+GitHub
+    ↓
+Argo CD
+    ↓
+Kubernetes
+
+## Argo CD Application
+
+An Application defines:
+
+- Git repository
+- Git revision
+- Repository path
+- Kubernetes destination
+- Sync policy
+
+## Automated Sync
+
+Argo CD automatically synchronizes changes from Git to Kubernetes.
+
+## Pruning
+
+Pruning removes resources from the cluster when they are removed
+from the desired Git state.
+
+## Self-Healing
+
+Self-healing detects manual changes to the cluster and reconciles
+the cluster back to the desired state in Git.
+
+## Drift
+
+Drift occurs when live Kubernetes state differs from the desired
+state stored in Git.
+
+Example:
+
+Git:
+replicas = 3
+
+Cluster:
+replicas = 1
+
+Argo CD detects the difference and self-heals the application.
+
+## CI vs CD
+
+GitHub Actions:
+Continuous Integration
+
+Argo CD:
+GitOps-based Continuous Delivery
+# Phase 6 - AWS and Infrastructure as Code
+
+## AWS Region
+
+Project region:
+
+ap-south-1
+
+## VPC
+
+A VPC is the isolated virtual network for AWS resources.
+
+## Subnet
+
+A subnet is a network segment inside a VPC.
+
+## Security Group
+
+A security group acts as a virtual firewall controlling network traffic
+to AWS resources.
+
+## EC2
+
+EC2 provides virtual compute instances in AWS.
+
+## CloudFormation
+
+CloudFormation is AWS-native Infrastructure as Code.
+
+A CloudFormation template defines AWS resources.
+
+A stack is the deployed collection of resources defined by a template.
+
+## Terraform
+
+Terraform is Infrastructure as Code using providers to manage resources.
+
+## IaC Ownership
+
+CloudFormation and Terraform will not manage the same AWS resources.
+
+CloudFormation will manage the initial AWS networking and EC2 infrastructure.
+
+Terraform will manage additional AWS resources separately.

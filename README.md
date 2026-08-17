@@ -48,3 +48,73 @@ kubectl get all -n devops-app
 Access the application:
 
 minikube service flask-service -n devops-app
+
+# Step 6.4 - CloudFormation Lifecycle
+
+## CloudFormation Update
+
+A stack can be updated by supplying a modified template.
+
+Flow:
+
+Modify template
+    ↓
+validate-template
+    ↓
+update-stack
+    ↓
+CloudFormation updates resources
+    ↓
+UPDATE_COMPLETE
+
+## Drift
+
+Drift occurs when live AWS resources differ from the configuration
+expected from the CloudFormation template.
+
+Command:
+
+aws cloudformation detect-stack-drift
+
+## Stack Events
+
+Stack events help troubleshoot CloudFormation operations.
+
+Command:
+
+aws cloudformation describe-stack-events
+
+## Stack Ownership
+
+CloudFormation manages:
+
+- VPC
+- Subnet
+- Route Table
+- Internet Gateway
+- Security Group
+- EC2
+
+Terraform manages separate AWS resources.
+
+The two tools must not manage the same resource.
+
+# Terraform
+
+Terraform is Infrastructure as Code using a configuration language
+and providers.
+
+Important commands:
+
+terraform init
+terraform fmt
+terraform validate
+terraform plan
+terraform apply
+terraform destroy
+
+## Terraform State
+
+Terraform uses a state file to track resources managed by Terraform.
+
+terraform.tfstate must not be committed to Git.
