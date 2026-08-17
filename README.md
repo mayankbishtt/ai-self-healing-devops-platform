@@ -9,7 +9,7 @@ Create the PostgreSQL secret:
 kubectl create secret generic postgres-secret `
   -n devops-app `
   --from-literal=POSTGRES_USER=postgres `
-  --from-literal=POSTGRES_PASSWORD="M@yank2609"
+  --from-literal=POSTGRES_PASSWORD=""
   --from-literal=POSTGRES_DB=devops_app
 
 Create the Flask application secret:
