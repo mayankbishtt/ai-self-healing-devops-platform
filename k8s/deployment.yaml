@@ -21,9 +21,12 @@ spec:
       containers:
         - name: flask
 
-          image: ai-devops-app:v2
+          image: ghcr.io/mayankbishtt/ai-self-healing-devops-platform:latest
 
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+
+          imagePullSecrets:
+            - name: ghcr-secret
 
           ports:
             - containerPort: 5000

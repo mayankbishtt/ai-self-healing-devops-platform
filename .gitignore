@@ -11,8 +11,7 @@ __pycache__/
 .idea/
 
 # Kubernetes secrets
-k8s/postgres-secret.yaml
-k8s/app-secret.yaml
+k8s/*secret*.yaml
 
 # Terraform
 .terraform/
