@@ -102,32 +102,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v4
-
-      - name: Validate namespace
-        run: kubectl apply -f k8s/namespace.yaml --dry-run=client --validate=false
-
-      - name: Validate PostgreSQL PVC
-        run: kubectl apply -f k8s/postgres-pvc.yaml --dry-run=client --validate=false
-
-      - name: Validate PostgreSQL ConfigMap
-        run: kubectl apply -f k8s/postgres-init-configmap.yaml --dry-run=client --validate=false
-
-      - name: Validate PostgreSQL Deployment
-        run: kubectl apply -f k8s/postgres-deployment.yaml --dry-run=client --validate=false
-
-      - name: Validate PostgreSQL Service
-        run: kubectl apply -f k8s/postgres-service.yaml --dry-run=client --validate=false
-
-      - name: Validate App ConfigMap
-        run: kubectl apply -f k8s/app-configmap.yaml --dry-run=client --validate=false
-
-      - name: Validate Flask Deployment
-        run: kubectl apply -f k8s/deployment.yaml --dry-run=client --validate=false
-
-      - name: Validate Flask Service
-        run: kubectl apply -f k8s/service.yaml --dry-run=client --validate=false
+      - name: Validate Kubernetes manifests
+        run: |
+          docker run --rm \
+            -v "$PWD:/workdir" \
+            ghcr.io/yannh/kubeconform:latest \
+            -strict \
+            -summary \
+            /workdir/k8s/*.yaml
 
 
   docker-build:

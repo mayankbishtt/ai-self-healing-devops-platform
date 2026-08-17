@@ -5,10 +5,6 @@ Description: >
 
 Parameters:
 
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: VPC for the EC2 instance.
-
   PublicSubnetId:
     Type: AWS::EC2::Subnet::Id
     Description: Public subnet for the EC2 instance.
