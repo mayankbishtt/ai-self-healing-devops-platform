@@ -10,7 +10,7 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
@@ -69,3 +69,18 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}:${{ github.sha }}
             ghcr.io/${{ github.repository }}:latest
+  
+      - name: Update Kubernetes image
+        run: |
+          sed -i "s|image: ghcr.io/mayankbishtt/ai-self-healing-devops-platform:.*|image: ghcr.io/mayankbishtt/ai-self-healing-devops-platform:${{ github.sha }}|" k8s/deployment.yaml
+
+      - name: Commit Kubernetes image update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add k8s/deployment.yaml
+
+          git commit -m "Update image to ${{ github.sha }} [skip ci]" || echo "No changes to commit"
+
+          git push
