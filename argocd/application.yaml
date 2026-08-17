@@ -10,7 +10,7 @@ spec:
 
   source:
     repoURL: https://github.com/mayankbishtt/ai-self-healing-devops-platform.git
-    targetRevision: main
+    targetRevision: gitops
     path: k8s
 
   destination:
