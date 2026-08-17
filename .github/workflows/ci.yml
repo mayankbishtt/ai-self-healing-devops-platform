@@ -40,6 +40,91 @@ jobs:
           pytest tests/
 
 
+  terraform-validate:
+    name: Validate Terraform
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Format Check
+        working-directory: terraform/aws
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        working-directory: terraform/aws
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        working-directory: terraform/aws
+        run: terraform validate
+
+
+  cloudformation-validate:
+    name: Validate CloudFormation
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Validate network template
+        run: |
+          aws cloudformation validate-template \
+            --template-body file://cloudformation/network/network.yaml
+
+      - name: Validate EC2 template
+        run: |
+          aws cloudformation validate-template \
+            --template-body file://cloudformation/ec2/ec2.yaml
+
+
+  kubernetes-validate:
+    name: Validate Kubernetes Manifests
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Validate namespace
+        run: kubectl apply -f k8s/namespace.yaml --dry-run=client
+
+      - name: Validate PostgreSQL PVC
+        run: kubectl apply -f k8s/postgres-pvc.yaml --dry-run=client
+
+      - name: Validate PostgreSQL ConfigMap
+        run: kubectl apply -f k8s/postgres-init-configmap.yaml --dry-run=client
+
+      - name: Validate PostgreSQL Deployment
+        run: kubectl apply -f k8s/postgres-deployment.yaml --dry-run=client
+
+      - name: Validate PostgreSQL Service
+        run: kubectl apply -f k8s/postgres-service.yaml --dry-run=client
+
+      - name: Validate App ConfigMap
+        run: kubectl apply -f k8s/app-configmap.yaml --dry-run=client
+
+      - name: Validate Flask Deployment
+        run: kubectl apply -f k8s/deployment.yaml --dry-run=client
+
+      - name: Validate Flask Service
+        run: kubectl apply -f k8s/service.yaml --dry-run=client
+
+
   docker-build:
     name: Build and Push Docker Image
 
@@ -47,6 +132,9 @@ jobs:
 
     needs:
       - test
+      - terraform-validate
+      - cloudformation-validate
+      - kubernetes-validate
 
     steps:
 
