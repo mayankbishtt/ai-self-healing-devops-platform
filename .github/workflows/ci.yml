@@ -104,12 +104,15 @@ jobs:
 
       - name: Validate Kubernetes manifests
         run: |
-          docker run --rm \
-            -v "$PWD:/workdir" \
-            ghcr.io/yannh/kubeconform:latest \
-            -strict \
-            -summary \
-            /workdir/k8s/*.yaml
+          for file in k8s/*.yaml; do
+            echo "Validating $file"
+            docker run --rm \
+              -v "$PWD:/workdir" \
+              ghcr.io/yannh/kubeconform:latest \
+              -strict \
+              -summary \
+              "/workdir/$file"
+          done
 
 
   docker-build:
