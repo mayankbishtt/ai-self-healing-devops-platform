@@ -26,7 +26,7 @@ spec:
       containers:
         - name: flask
 
-          image: ghcr.io/mayankbishtt/ai-self-healing-devops-platform:97d874a9d3a7f1ea9c1baefbaadc6542423cb8c0
+          image: ghcr.io/mayankbishtt/ai-self-healing-devops-platform:dd70b6ea0953c29f2df77f7d54a36091b40e5a78
 
           imagePullPolicy: Always
 
