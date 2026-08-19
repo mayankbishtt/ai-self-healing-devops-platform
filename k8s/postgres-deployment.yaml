@@ -18,10 +18,22 @@ spec:
         app: postgres
 
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
         - name: postgres
 
           image: postgres:16
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
 
           ports:
             - containerPort: 5432
@@ -51,6 +63,13 @@ spec:
 
             - name: postgres-init
               mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
+
+            - name: postgres-tmp
+              mountPath: /tmp
+
+            - name: postgres-run
+              mountPath: /var/run/postgresql
 
           readinessProbe:
             exec:
@@ -80,3 +99,9 @@ spec:
         - name: postgres-init
           configMap:
             name: postgres-init
+
+        - name: postgres-tmp
+          emptyDir: {}
+
+        - name: postgres-run
+          emptyDir: {}

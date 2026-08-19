@@ -6,7 +6,14 @@ COPY app/requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app/ .
+RUN addgroup --system appgroup && \
+    adduser --system --ingroup appgroup appuser
+
+COPY --chown=appuser:appgroup app/ .
+
+ENV PYTHONDONTWRITEBYTECODE=1
+
+USER appuser
 
 EXPOSE 5000
 

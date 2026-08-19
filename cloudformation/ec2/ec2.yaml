@@ -42,6 +42,11 @@ Resources:
       ImageId: !Ref AMIId
 
       InstanceType: !Ref InstanceType
+      
+      MetadataOptions:
+        HttpEndpoint: enabled
+        HttpTokens: required
+        HttpPutResponseHopLimit: 1
 
       SubnetId: !Ref PublicSubnetId
 

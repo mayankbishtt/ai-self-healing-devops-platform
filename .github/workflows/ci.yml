@@ -79,6 +79,7 @@ jobs:
           scanners: vuln,misconfig,secret
           severity: CRITICAL,HIGH
           ignore-unfixed: true
+          ignorefile: .trivyignore
           exit-code: 1
 
 

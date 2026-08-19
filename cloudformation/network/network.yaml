@@ -14,11 +14,10 @@ Parameters:
     Type: String
     Default: 10.0.1.0/24
     Description: CIDR block for the public subnet.
-  
+
   SSHLocation:
     Type: String
     Description: CIDR range allowed to access EC2 using SSH.
-    Default: 0.0.0.0/0
 
 Resources:
 
@@ -48,12 +47,17 @@ Resources:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref DevOpsVPC
 
+  #trivy:ignore:AWS-0164
+  # Reason: This learning project intentionally uses a public subnet
+  # for the EC2 instance so that SSH and internet connectivity can be
+  # demonstrated directly.
   PublicSubnet:
     Type: AWS::EC2::Subnet
 
     Properties:
       VpcId: !Ref DevOpsVPC
       CidrBlock: !Ref PublicSubnetCidr
+
       AvailabilityZone: !Select
         - 0
         - !GetAZs ''
@@ -104,18 +108,24 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: !Ref SSHLocation
-          Description: SSH
+          Description: SSH from administrator IP
 
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
-          Description: HTTP
+          Description: Public HTTP access
 
       SecurityGroupEgress:
 
-        - IpProtocol: -1
+        #trivy:ignore:AWS-0104
+        # Reason: EC2 requires outbound HTTPS for package updates,
+        # GitHub/GHCR access, Docker image pulls, and DevOps tooling.
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
           CidrIp: 0.0.0.0/0
+          Description: HTTPS outbound for DevOps tooling
 
       Tags:
         - Key: Name
@@ -126,18 +136,21 @@ Outputs:
   VpcId:
     Description: ID of the DevOps VPC
     Value: !Ref DevOpsVPC
+
     Export:
       Name: AI-DevOps-VpcId
 
   PublicSubnetId:
     Description: ID of the public subnet
     Value: !Ref PublicSubnet
+
     Export:
       Name: AI-DevOps-PublicSubnetId
 
   SecurityGroupId:
     Description: ID of the EC2 security group
     Value: !Ref EC2SecurityGroup
+
     Export:
       Name: AI-DevOps-SecurityGroupId
 
